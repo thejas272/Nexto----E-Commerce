@@ -1,0 +1,116 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Complete Your Payment</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .payment-container {
+            max-width: 500px;
+            margin: 70px auto;
+        }
+
+        .payment-card {
+            border-radius: 10px;
+        }
+
+        .razorpay-logo {
+            width: 90px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="payment-container">
+        <div class="card shadow payment-card p-4">
+
+            <div class="text-center mb-3">
+                <img src="https://cdn.razorpay.com/logo.png" class="razorpay-logo" alt="Razorpay Logo">
+                <h3 class="fw-bold">Complete Payment</h3>
+                <p class="text-muted">Secure Payment Gateway</p>
+            </div>
+
+            <hr>
+
+            <div class="mb-3">
+                <p class="mb-1"><strong>Order ID:</strong> {{ order.id }}</p>
+                <p class="mb-1"><strong>Amount:</strong> ₹ {{ amount|floatformat:2 }}</p>
+            </div>
+
+            <div class="text-center mt-4">
+                <button id="rzp-button" class="btn btn-primary btn-lg w-100">
+                    Pay Now (₹ {{ amount|floatformat:2 }})
+                </button>
+            </div>
+        </div>
+
+        <form id="payment-form" action="{% url 'verify_payment' %}" method="post">
+            {% csrf_token %}
+
+            <input type="hidden" name="razorpay_order_id"    id="razorpay_order_id">
+            <input type="hidden" name="razorpay_payment_id"  id="razorpay_payment_id">
+            <input type="hidden" name="razorpay_signature"   id="razorpay_signature">
+        </form>
+
+    </div>
+
+
+    <!-- Razorpay Script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script>
+        // options gets eexeecuted as soon as this page is loaded
+        var options = {
+            "key": "{{ key_id }}",
+            "amount": "{{ order.amount_paise }}",  // Example: 50000 for ₹500
+            "currency": "INR",
+            "name": "Nexto",
+            "description": "Order Payment",
+            "order_id": "{{ order.id }}",
+
+            // after user makes payment in rzp1 interface this handler function gets invoked automatically 
+            // assigning values to form hidden inputs after which form is submitted to verify_payment url path
+            "handler": function (response){
+                document.getElementById("razorpay_payment_id").value = response.razorpay_payment_id;
+                document.getElementById("razorpay_order_id").value = response.razorpay_order_id;
+                document.getElementById("razorpay_signature").value = response.razorpay_signature;
+
+                document.getElementById("payment-form").submit();
+            }
+        };
+        
+        // creating an object of Razorpay object which helps to open payment interface
+        var rzp1 = new Razorpay(options);
+
+        // if payment fails this will be executed as razorpay triggers failed event
+        rzp1.on('payment.failed', function (response){
+                console.log("PAYMENT FAILED EVENT FIRED:", response);
+
+                document.getElementById("razorpay_order_id").value = response.error.metadata.order_id;
+                document.getElementById("razorpay_payment_id").value = response.error.metadata.payment_id || "";
+                document.getElementById("razorpay_signature").value = "";
+
+                document.getElementById("payment-form").submit();
+            });
+
+
+        // when user clicks on Pay Now button this will get eecuted where rzp1 is an object of razorpay which gets opened up
+        document.getElementById("rzp-button").onclick = function (e) {
+            rzp1.open();
+            e.preventDefault();
+        };
+    </script>
+
+</body>
+</html>

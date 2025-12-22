@@ -1,0 +1,201 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+        <title>Nexto - Your shopping partner</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="" name="keywords">
+        <meta content="" name="description">
+
+        <!-- Google Web Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet"> 
+
+        <!-- Icon Font Stylesheet -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+        <!-- Libraries Stylesheet -->
+        <link href="{% static 'lib/lightbox/css/lightbox.min.css' %}" rel="stylesheet">
+        <link href="{% static 'lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+
+
+        <!-- Customized Bootstrap Stylesheet -->
+        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+        <!-- Template Stylesheet -->
+        <link href="{% static 'css/style.css' %}" rel="stylesheet">
+  </head>
+
+  <body>
+        <!-- Spinner Start -->
+        <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
+            <div class="spinner-grow text-primary" role="status"></div>
+        </div>
+        <!-- Spinner End -->
+
+
+        <!-- Navbar start -->
+        <div class="container-fluid fixed-top">
+            <div class="container topbar bg-primary d-none d-lg-block">
+                <div class="d-flex justify-content-between">
+                    <div class="top-info ps-2">
+                        <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> <a href="#" class="text-white">123 Street, New York</a></small>
+                        <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="#" class="text-white">Email@Example.com</a></small>
+                    </div>
+                    <div class="top-link pe-2">
+                        <a href="#" class="text-white"><small class="text-white mx-2">Privacy Policy</small>/</a>
+                        <a href="#" class="text-white"><small class="text-white mx-2">Terms of Use</small>/</a>
+                        <a href="#" class="text-white"><small class="text-white ms-2">Sales and Refunds</small></a>
+                    </div>
+                </div>
+            </div>
+            <div class="container px-0">
+                <nav class="navbar navbar-light bg-white navbar-expand-xl">
+                    <a href="{% url 'index' %}" class="navbar-brand"><h1 class="text-primary display-6">Nexto</h1></a>
+                    <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                        <span class="fa fa-bars text-primary"></span>
+                    </button>
+                    <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
+                        <div class="navbar-nav mx-auto">
+                            <a href="{% url 'index' %}" class="nav-item nav-link active">Home</a>
+                            <a href="{% url 'shop' %}" class="nav-item nav-link">Shop</a>
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                                <div class="dropdown-menu m-0 bg-secondary rounded-0">
+                                    <a href="{% url 'cart' %}" class="dropdown-item">Cart</a>
+                                    <a href="{% url 'checkout' %}" class="dropdown-item">Checkout</a>
+                                    <a href="{% url 'testimonial' %}" class="dropdown-item">Testimonial</a>
+                                    <a href="404.html" class="dropdown-item">404 Page</a>
+                                </div>
+                            </div>
+                            <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
+                        </div>
+                        <div class="d-flex m-3 me-0">
+                            <a href="{% url 'admin_alert_list' %}" class="position-relative me-4 my-auto" id="alertBell">
+                              <i class="fa fa-bell fa-2x text-warning"></i>
+                              <span class="position-absolute bg-danger rounded-circle 
+                                          d-flex align-items-center justify-content-center text-white 
+                                          px-1 fw-bold"
+                                          style="top: -5px; left: 15px; height: 20px; min-width: 20px;">
+                                {{alert_count}}
+                              </span>
+                            </a>
+                            <a href="#" class="position-relative me-4 my-auto">
+                                <i class="fa fa-shopping-bag fa-2x"></i>
+                                {% if cart_count %}
+                                <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">{{cart_count}}</span>
+                                {% endif %}
+                            </a>
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                    <i class="fas fa-user fa-2x"></i> {% if user.is_authenticated %}{{ user.username }}{% endif %}
+                                </a>
+                                <div class="dropdown-menu m-0 bg-secondary rounded-0">            
+                                  <a href="{% url 'admin_profile' %}" class="dropdown-item">Profile</a>
+                                  <a href="{% url 'logout' %}" class="dropdown-item">Logout</a>
+                                </div>
+                            </div>
+                        </div>                        
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!-- Navbar End -->
+
+
+                <!-- Single Page Header start -->
+        <div class="container-fluid page-header py-5">
+            <h1 class="text-center text-white display-6">Welcome, {{ user.first_name }}</h1>
+            <ol class="breadcrumb justify-content-center">
+                <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'admin_profile' %}">{{ user.username }}</a></li>
+                <li class="breadcrumb-item active text-white">Admin Profile</li>
+            </ol>
+        </div>
+        <!-- Single Page Header End -->
+
+
+        <!-- Hero Start -->
+        <div class="container-fluid py-0 mb-5 hero-header">
+            <h3 class="text-center mb-4 text-primary">Your Account</h3>
+            <div class="container py-0">
+               <div class="row g-4 align-items-stretch">
+                <div class="col-md-6 col-lg-4 col-xl-3 d-flex">
+                    <a href="#" class="text-decoration-none w-100">
+                    <div class="card shadow-sm border-0 hover-card w-100">
+                      <div class="p-4 border border-secondary rounded-top rounded-bottom text-center d-flex flex-column flex-grow-1 min-vh-50">
+                        <div class="mb-auto">
+                          <i class="fas fa-lock fa-2x text-primary mb-3"></i>
+                          <h4>Login & security</h4>
+                        </div>
+                        <p>Edit username, password, email</p>
+                      </div>
+                    </div>
+                    </a>
+                </div>
+
+                <div class="col-md-6 col-lg-4 col-xl-3 d-flex">
+                    <a href="{% url 'admin_order_list' %}" class="text-decoration-none w-100">
+                    <div class="card shadow-sm border-0 hover-card w-100">
+                      <div class="p-4 border border-secondary rounded-top rounded-bottom text-center d-flex flex-column flex-grow-1 min-vh-50">
+                        <div class="mb-auto">
+                          <i class="fas fa-box fa-2x text-success mb-3"></i>
+                          <h4>Orders</h4>
+                        </div>
+                        <p>Track, return, or buy things again</p>
+                      </div>
+                    </div>
+                    </a>
+                </div>
+
+                <div class="col-md-6 col-lg-4 col-xl-3 d-flex">
+                    <a href="{% url 'admin_customer_list' %}" class="text-decoration-none w-100">
+                    <div class="card shadow-sm border-0 hover-card w-100">
+                      <div class="p-4 border border-secondary rounded-top rounded-bottom text-center d-flex flex-column flex-grow-1 min-vh-50">
+                        <div class="mb-auto">
+                          <i class="fas fa-credit-card fa-2x text-warning mb-3"></i>
+                          <h4>Customers</h4>
+                        </div>
+                        <p>Manage customers</p>
+                      </div>
+                    </div>
+                    </a>
+                </div>
+                <div class="col-md-6 col-lg-4 col-xl-3 d-flex">
+                    <a href="{% url 'staff_log' %}" class="text-decoration-none w-100">
+                    <div class="card shadow-sm border-0 hover-card w-100">
+                      <div class="p-4 border border-secondary rounded-top rounded-bottom text-center d-flex flex-column flex-grow-1 min-vh-50">
+                        <div class="mb-auto">
+                          <i class="fas fa-history fa-2x text-warning mb-3"></i>
+                          <h4>Logs</h4>
+                        </div>
+                        <p>Manage logs</p>
+                      </div>
+                    </div>
+                    </a>
+                </div>
+              </div>
+
+
+        </div>
+      </div>
+        <!-- Hero End -->
+
+
+    <!-- JavaScript Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'lib/easing/easing.min.js' %}"></script>
+    <script src="{% static 'lib/waypoints/waypoints.min.js' %}"></script>
+    <script src="{% static 'lib/lightbox/js/lightbox.min.js' %}"></script>
+    <script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
+
+    <!-- Template Javascript -->
+    <script src="{% static 'js/main.js' %}"></script>
+  </body>
+
+</html>
