@@ -13,24 +13,6 @@ from datetime import timedelta
 # Create your views here.
 
 
-from django.contrib.auth import get_user_model
-from django.http import HttpResponse
-
-
-def create_superuser_once(request):
-    User = get_user_model()
-
-    if not User.objects.filter(username="admin").exists():
-        User.objects.create_superuser(
-            username="admin",
-            email="admin@example.com",
-            password="Malayalam#3"
-        )
-        return HttpResponse("Superuser created")
-
-    return HttpResponse("Superuser already exists")
-
-
 
 def login(request):
   if request.user.is_authenticated:
