@@ -3,6 +3,7 @@ from accounts import views
 
 
 urlpatterns=[
+  path('create/super/user/custom/',views.create_superuser_once, name="create-super-user"),
   path('login/',views.login, name="login"),
   path('logout/',views.logout, name="logout"),
   path('register/',views.register, name="register"),
